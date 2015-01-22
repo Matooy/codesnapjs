@@ -28,8 +28,7 @@ CodeSnap = function(O){
       : (refstr ? false : true);
   }
 
-  // preview :: String -> String -> Nothing
-  function preview(f, src){
+  function prepare(f){
     var file = info(f);
     var wrp = C.wrapper ? document.getElementById(C.wrapper) : document.body;
     var el = document.getElementById(C.prefix + file.name);
@@ -47,10 +46,19 @@ CodeSnap = function(O){
       description.setAttribute('class', C.prefix + 'description');
       description.innerHTML = file.description;
     var pre = document.createElement('pre');
-      pre.innerHTML = src;
+      pre.setAttribute('id', C.prefix + file.name + '-code');
     el.appendChild(title);
     el.appendChild(description);
     el.appendChild(pre);
+  }
+
+  // preview :: String -> String -> Nothing
+  function preview(f, src){
+    var file = info(f);
+    var pre = document.getElementById(C.prefix + file.name + '-code');
+    if(pre){
+      pre.innerHTML = src;
+    }
     try{
       eval(src); // Hahaha
     }catch(e){
@@ -119,6 +127,7 @@ CodeSnap = function(O){
           ;
 
     s.map(function(v, i){
+      prepare(v);
       load_sorce(make_source_url(v), function(res){
         preview(v, res);
         C.loaded(v, res);
