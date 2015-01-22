@@ -5,8 +5,8 @@ CodeSnap = function(O){
   , wrapper   : O.wrapper  || null
   , dir       : O.dir      || 'samples'
   , files     : O.files    || []
-  , loaded    : O.loaded   || function(name, text){
-                                console.log("CodeSnap> "+name+"loaded."); }
+  , loaded    : O.loaded   || function(f, text){
+                                console.log("CodeSnap> "+ info(f).name +"loaded."); }
   , format: {
       title: associated(O, 'format.title')
                ? O.format.title
