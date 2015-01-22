@@ -60,9 +60,9 @@ CodeSnap = function(O){
       pre.innerHTML = src;
     }
     try{
-      eval(src); // Hahaha
+      (new Function("'use strict'; " + src))(file.params || {});
     }catch(e){
-      console.error(e);
+      console.warn("[CodeSnap] Error occured in " + file.name + ": \n"+e.stack);
     }
   }
 
@@ -101,7 +101,9 @@ CodeSnap = function(O){
       title: is_a(v)
         ? (v[1] && v[1].hasOwnProperty('title')?v[1].title:"") : "",
       description: is_a(v)
-        ? (v[1] && v[1].hasOwnProperty('description')?v[1].description:"") : ""
+        ? (v[1] && v[1].hasOwnProperty('description')?v[1].description:"") : "",
+      params: is_a(v)
+        ? (v[1] && v[1].hasOwnProperty('params')?v[1].params:null) : null
     }
   }
 
