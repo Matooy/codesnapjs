@@ -47,7 +47,7 @@ CodeSnap = function(O){
       description.innerHTML = file.description;
     var pre = document.createElement('pre');
       pre.setAttribute('id', C.prefix + file.name + '-code');
-      pre.setAttribute('class', C.prefix + '-code');
+      pre.setAttribute('class', C.prefix + 'code');
     el.appendChild(title);
     el.appendChild(description);
     el.appendChild(pre);
