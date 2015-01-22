@@ -1,7 +1,7 @@
 CodeSnap = function(O){
 
   this.config = {                // Defaults
-    prefix    : O.prefix   || 'code-sampler-'
+    prefix    : O.prefix   || 'codesnap-'
   , wrapper   : O.wrapper  || null
   , dir       : O.dir      || 'samples'
   , files     : O.files    || []
