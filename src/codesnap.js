@@ -6,7 +6,7 @@ CodeSnap = function(O){
   , dir       : O.dir      || 'samples'
   , files     : O.files    || []
   , loaded    : O.loaded   || function(f, text){
-                                console.log("CodeSnap> "+ info(f).name +"loaded."); }
+                                console.log("CodeSnap> "+ (info(f).name) +" loaded."); }
   , format: {
       title: associated(O, 'format.title')
                ? O.format.title
