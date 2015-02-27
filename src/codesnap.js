@@ -10,6 +10,7 @@ CodeSnap = function(O){
   , dir       : O.dir      || 'samples'
   , files     : O.files    || []
   , loaded    : O.loaded   || function(f, text){ console.log("CodeSnap> "+ (info(f).name) +" loaded."); }
+  , before    : O.before   || function(f, text){}
   , format: {
       title: associated(O, 'format.title')
         ? O.format.title
@@ -156,6 +157,7 @@ CodeSnap = function(O){
     s.map(function(v, i){
       prepare(v);
       load_sorce(make_source_url(v), function(res){
+        C.before(v, res);
         preview(v, res);
         C.loaded(v, res);
       });
