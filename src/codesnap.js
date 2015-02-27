@@ -51,8 +51,12 @@ CodeSnap = function(O){
       description.setAttribute('class', C.prefix + 'description');
       description.innerHTML = file.description;
     var pre = document.createElement('pre');
-      pre.setAttribute('id', C.prefix + file.name + '-code');
-      pre.setAttribute('class', C.prefix + 'code');
+      pre.setAttribute('id', C.prefix + file.name + '-pre');
+      pre.setAttribute('class', C.prefix + 'pre');
+      var code = document.createElement('code');
+        code.setAttribute('id', C.prefix + file.name + '-code');
+        code.setAttribute('class', C.prefix + 'code');
+        pre.appendChild(code);
     el.appendChild(title);
     el.appendChild(description);
     el.appendChild(pre);
@@ -62,9 +66,10 @@ CodeSnap = function(O){
   function preview(f, src){
     var file = info(f);
     var wrap = document.getElementById(C.prefix + file.name);
-    var pre = document.getElementById(C.prefix + file.name + '-code');
-    if(pre){
-      pre.innerHTML = src;
+    var pre = document.getElementById(C.prefix + file.name + '-pre');
+    var code = document.getElementById(C.prefix + file.name + '-code');
+    if(code){
+      code.innerHTML = src;
     }
     try{
       (new Function("'use strict'; " + src))(file.params || {});
