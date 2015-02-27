@@ -1,25 +1,29 @@
+// CodeSnap
+//
+// Author: Matooy
+//
 CodeSnap = function(O){
 
-  this.config = {                // Defaults
+  this.config = { // Defaults
     prefix    : O.prefix   || 'codesnap-'
   , wrapper   : O.wrapper  || null
   , dir       : O.dir      || 'samples'
   , files     : O.files    || []
-  , loaded    : O.loaded   || function(f, text){
-                                console.log("CodeSnap> "+ (info(f).name) +" loaded."); }
+  , loaded    : O.loaded   || function(f, text){ console.log("CodeSnap> "+ (info(f).name) +" loaded."); }
   , format: {
       title: associated(O, 'format.title')
-               ? O.format.title
-               : "<p>{{title}}</p>"
+        ? O.format.title
+        : "<p>{{title}}</p>"
     , description: associated(O, 'format.description')
-                     ? O.format.description
-                     : "<div>{{description}}</div>"
+        ? O.format.description
+        : "<div>{{description}}</div>"
     }
   }
 
   // Surrogaion
   var C = this.config;
 
+  //
   function associated(o, refstr){
     var s = (refstr || "").split(".")
       , k = s.shift() ;
@@ -28,6 +32,7 @@ CodeSnap = function(O){
       : (refstr ? false : true);
   }
 
+  //
   function prepare(f){
     var file = info(f);
     var wrp = C.wrapper ? document.getElementById(C.wrapper) : document.body;
@@ -56,14 +61,20 @@ CodeSnap = function(O){
   // preview :: String -> String -> Nothing
   function preview(f, src){
     var file = info(f);
+    var wrap = document.getElementById(C.prefix + file.name);
     var pre = document.getElementById(C.prefix + file.name + '-code');
     if(pre){
       pre.innerHTML = src;
     }
     try{
       (new Function("'use strict'; " + src))(file.params || {});
+      (file.callback.complete) && file.callback.complete(file);
     }catch(e){
-      console.warn("[CodeSnap] Error occured in " + file.name + ": \n"+e.stack);
+      console.error("[CodeSnap] Error occured in " + file.name);
+      wrap.className = wrap.className + ' codesnap-exception';
+      pre.className = pre.className + ' codesnap-exception';
+      pre.title = '[CodeSnap] ' + e.message;
+      (file.callback.error) && file.callback.error(e, file);
     }
   }
 
@@ -97,14 +108,23 @@ CodeSnap = function(O){
   }
 
   function info(v){
+    var isa = is_a(v);
     return {
-      name: is_a(v) ? v[0] : v,
-      title: is_a(v)
-        ? (v[1] && v[1].hasOwnProperty('title')?v[1].title:"") : "",
-      description: is_a(v)
-        ? (v[1] && v[1].hasOwnProperty('description')?v[1].description:"") : "",
-      params: is_a(v)
+      name: isa ? v[0] : v
+    , title: isa
+        ? (v[1] && v[1].hasOwnProperty('title')?v[1].title:"") : ""
+    , description: isa
+        ? (v[1] && v[1].hasOwnProperty('description')?v[1].description:"") : ""
+    , params: isa
         ? (v[1] && v[1].hasOwnProperty('params')?v[1].params:null) : null
+    , callback: {
+        complete: isa
+          ? (v[2] && v[2].hasOwnProperty('complete')&&typeof v[2]['complete'] === 'function'?v[2]['complete']:null)
+          : null
+      , error : isa
+          ? (v[2] && v[2].hasOwnProperty('error')&&typeof v[2]['error'] === 'function'?v[2]['error']:null)
+          : null
+      }
     }
   }
 
@@ -114,10 +134,8 @@ CodeSnap = function(O){
     return function(v, i){
       var fname = is_a(v) ? v[0] : v;
       switch (t) {
-        case '[object Array]':
-          return file.indexOf(fname) > -1;
-        default:
-          return fname === file;
+        case '[object Array]': return file.indexOf(fname) > -1;
+        default: return fname === file;
       }
     }
   }

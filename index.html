@@ -10,6 +10,9 @@ pre {
   padding: 4px;
   border: 1px solid #aaa;
 }
+pre.codesnap-exception {
+  background: #fccccc;
+}
 </style>
 
 <body>
@@ -20,11 +23,27 @@ pre {
 (new CodeSnap({
   wrapper: 'sample-box',
   files: [
-    ["sample1", {
-      title: "foo",
-      description: "<b>Notice</b>: baaaar"
-    }],
-    ["sample2"]
+    ["sample1",
+      {
+        title: 'Sample 1',
+        description: "<b>Notice</b>: This is an error example.<br>'.codesnap-exception' will be added to each wrapper and pre tags."
+      },
+      {
+        error: function(e, file){
+          console.error('This is a error callback of ' +file.name);
+        }
+      }
+    ],
+    ["sample2",
+      {
+        title: 'Sample 2'
+      },
+      {
+        complete: function(file){
+          console.log('Callback of ' + file.name);
+        }
+      }
+    ]
   ]
 })).load();
 </script>
