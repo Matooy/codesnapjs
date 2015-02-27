@@ -40,6 +40,7 @@ CodeSnap = function(O){
     if(!el){
       el = document.createElement('div');
       el.setAttribute('id', C.prefix + file.name);
+      el.setAttribute('class', C.prefix + 'container');
       wrp.appendChild(el);
     }
     var title = document.createElement('div');
