@@ -5,12 +5,26 @@
 CodeSnap = function(O){
 
   this.config = { // Defaults
+
+    // Prefix for element classes.
     prefix    : O.prefix   || 'codesnap-'
+
+    // ID of element
   , wrapper   : O.wrapper  || null
+
+    // base URL for sample files.
   , dir       : O.dir      || 'samples'
+
+    // Sample files. [{title:, description:, param:}]
   , files     : O.files    || []
+
+  , show_index: true
+
+    // Callbacks
   , loaded    : O.loaded   || function(f, text){ console.log("CodeSnap> "+ (info(f).name) +" loaded."); }
-  , before    : O.before   || function(f, text){}
+  , before    : O.before   || function(f, text){ return f; }
+
+    //
   , format: {
       title: associated(O, 'format.title')
         ? O.format.title
@@ -33,10 +47,20 @@ CodeSnap = function(O){
       : (refstr ? false : true);
   }
 
+  function prepare_GUI(){
+    var wrp = C.wrapper ? document.getElementById(C.wrapper) : document.body;
+    if(C.show_index){
+      var index = document.createElement('div');
+      index.setAttribute('id', C.prefix + 'index');
+      wrp.appendChild(index);
+    }
+  }
+
   //
-  function prepare(f){
+  function prepare_GUI_for_file(f){
     var file = info(f);
     var wrp = C.wrapper ? document.getElementById(C.wrapper) : document.body;
+    var ind = document.getElementById(C.prefix + 'index');
     var el = document.getElementById(C.prefix + file.name);
     if(!el){
       el = document.createElement('div');
@@ -44,14 +68,25 @@ CodeSnap = function(O){
       el.setAttribute('class', C.prefix + 'container');
       wrp.appendChild(el);
     }
+    if(C.show_index){
+      var anc = document.createElement('a');
+      anc.setAttribute('href', '#' + C.prefix + file.name);
+      anc.setAttribute('class', C.prefix + 'index-anchor');
+      anc.innerHTML = file.name;
+      ind.appendChild(anc);
+    }
     var title = document.createElement('div');
       title.setAttribute('id', C.prefix + file.name + '-title');
       title.setAttribute('class', C.prefix + 'title');
-      title.innerHTML = file.title;
+      title.innerHTML = file.title || file.name;
+      el.appendChild(title);
     var description = document.createElement('div');
-      description.setAttribute('id', C.prefix + file.name + '-description');
-      description.setAttribute('class', C.prefix + 'description');
-      description.innerHTML = file.description;
+      (file.description) && (function(){
+        description.setAttribute('id', C.prefix + file.name + '-description');
+        description.setAttribute('class', C.prefix + 'description');
+        description.innerHTML = file.description;
+        el.appendChild(description);
+      })();
     var pre = document.createElement('pre');
       pre.setAttribute('id', C.prefix + file.name + '-pre');
       pre.setAttribute('class', C.prefix + 'pre');
@@ -59,9 +94,7 @@ CodeSnap = function(O){
         code.setAttribute('id', C.prefix + file.name + '-code');
         code.setAttribute('class', C.prefix + 'code');
         pre.appendChild(code);
-    el.appendChild(title);
-    el.appendChild(description);
-    el.appendChild(pre);
+      el.appendChild(pre);
   }
 
   // preview :: String -> String -> Nothing
@@ -74,7 +107,7 @@ CodeSnap = function(O){
       code.innerHTML = src;
     }
     try{
-      (new Function("'use strict'; " + src))(file.params || {});
+      (new Function("'use strict'; " + src))(file.param || {});
       (file.callback.complete) && file.callback.complete(file);
     }catch(e){
       console.error("[CodeSnap] Error occured in " + file.name);
@@ -122,8 +155,8 @@ CodeSnap = function(O){
         ? (v[1] && v[1].hasOwnProperty('title')?v[1].title:"") : ""
     , description: isa
         ? (v[1] && v[1].hasOwnProperty('description')?v[1].description:"") : ""
-    , params: isa
-        ? (v[1] && v[1].hasOwnProperty('params')?v[1].params:null) : null
+    , param: isa
+        ? (v[1] && v[1].hasOwnProperty('param')?v[1].param:null) : null
     , callback: {
         complete: isa
           ? (v[2] && v[2].hasOwnProperty('complete')&&typeof v[2]['complete'] === 'function'?v[2]['complete']:null)
@@ -149,15 +182,14 @@ CodeSnap = function(O){
 
 
   this.load = function(file){
-    var s = (file)
-          ? C.files.filter(this.filtering_file(file))
-          : C.files
-          ;
-
-    s.map(function(v, i){
-      prepare(v);
+    (prepare_GUI());
+    ((file)
+      ? C.files.filter(this.filtering_file(file))
+      : C.files
+    ).map(function(v, i){
+      prepare_GUI_for_file(v);
       load_sorce(make_source_url(v), function(res){
-        C.before(v, res);
+        v = C.before(v, res);
         preview(v, res);
         C.loaded(v, res);
       });

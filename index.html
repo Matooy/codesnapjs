@@ -5,6 +5,16 @@
 </head>
 
 <style>
+* {
+  color: #555;
+  line-height: 1.6em;
+}
+#sample-box {
+  padding: 1em;
+  width: 80%;
+  min-width: 640px;
+  margin: auto;
+}
 pre {
   font-size: 14px;
   padding: 4px;
@@ -12,6 +22,18 @@ pre {
 }
 pre.codesnap-exception {
   background: #fccccc;
+}
+
+.codesnap-title {
+  font-size: 1.8em;
+  margin-top: 1em;
+}
+
+.codesnap-description {
+  padding: .5em;
+  margin-top: .5em;
+  border: 1px dashed #aaa;
+
 }
 </style>
 
@@ -22,25 +44,27 @@ pre.codesnap-exception {
 <script type="text/javascript">
 (new CodeSnap({
   wrapper: 'sample-box',
+  dir:     'samples',
   files: [
     ["sample1",
       {
-        title: 'Sample 1',
+        //title: 'Sample 1', No title. Uses file[0] value.
         description: "<b>Notice</b>: This is an error example.<br>'.codesnap-exception' will be added to each wrapper and pre tags."
       },
       {
         error: function(e, file){
-          console.error('This is a error callback of ' +file.name);
+          console.error('This is a error callback of ' + file.name);
         }
       }
     ],
     ["sample2",
       {
-        title: 'Sample 2'
+        title: 'Sample 2',
+        param: {}
       },
       {
         complete: function(file){
-          console.log('Callback of ' + file.name);
+          console.log('Complete callback of ' + file.name);
         }
       }
     ]
