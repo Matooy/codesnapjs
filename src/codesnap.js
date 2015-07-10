@@ -50,9 +50,14 @@ CodeSnap = function(O){
   function prepare_GUI(){
     var wrp = C.wrapper ? document.getElementById(C.wrapper) : document.body;
     if(C.show_index){
-      var index = document.createElement('div');
-      index.setAttribute('id', C.prefix + 'index');
-      wrp.appendChild(index);
+      var id = C.prefix + 'index';
+      var el = document.getElementById(id);
+      if(el){
+      }else{
+        el = document.createElement('div');
+        el.setAttribute('id', id);
+        wrp.appendChild(el);
+      }
     }
   }
 
