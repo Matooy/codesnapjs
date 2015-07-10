@@ -189,9 +189,9 @@ CodeSnap = function(O){
     ).map(function(v, i){
       prepare_GUI_for_file(v);
       load_sorce(make_source_url(v), function(res){
-        v = C.before(v, res);
+        var rv = C.before(v, res);
         preview(v, res);
-        C.loaded(v, res);
+        C.loaded(v, res, rv);
       });
     });
   }
