@@ -21,8 +21,11 @@ CodeSnap = function(O){
   , show_index: true
 
     // Callbacks
-  , loaded    : O.loaded   || function(f, text){ console.log("CodeSnap> "+ (info(f).name) +" loaded."); }
-  , before    : O.before   || function(f, text){ return f; }
+  , events    : {
+      loaded    : (O.events && O.events.loaded)   || function(f, text){ console.log("CodeSnap> "+ (info(f).name) +" loaded."); }
+    , before    : (O.events && O.events.before)   || function(f, text){ return f; }
+    , indexed   : (O.events && O.events.indexed)  || function(wrapper, anchor){ wrapper.appendChild(anchor); }
+  }
 
     //
   , format: {
@@ -73,12 +76,12 @@ CodeSnap = function(O){
       el.setAttribute('class', C.prefix + 'container');
       wrp.appendChild(el);
     }
-    if(C.show_index){
+    if(C.show_index && ind){
       var anc = document.createElement('a');
       anc.setAttribute('href', '#' + C.prefix + file.name);
       anc.setAttribute('class', C.prefix + 'index-anchor');
       anc.innerHTML = file.name;
-      ind.appendChild(anc);
+      C.events.indexed(ind, anc);
     }
     var title = document.createElement('div');
       title.setAttribute('id', C.prefix + file.name + '-title');
@@ -194,9 +197,9 @@ CodeSnap = function(O){
     ).map(function(v, i){
       prepare_GUI_for_file(v);
       load_sorce(make_source_url(v), function(res){
-        var rv = C.before(v, res);
+        var rv = C.events.before(v, res);
         preview(v, res);
-        C.loaded(v, res, rv);
+        C.events.loaded(v, res, rv);
       });
     });
   }

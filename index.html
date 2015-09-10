@@ -68,7 +68,16 @@ pre.codesnap-exception {
         }
       }
     ]
-  ]
+  ],
+  events: {
+    loaded: function(f){
+      console.log(f[0] + ' loaded');
+    },
+    indexed: function(wrapper, anchor){
+      anchor.style.margin = '4px';
+      wrapper.appendChild(anchor);
+    }
+  }
 })).load();
 </script>
 
