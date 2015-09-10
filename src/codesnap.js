@@ -22,9 +22,9 @@ CodeSnap = function(O){
 
     // Callbacks
   , events    : {
-      loaded    : (O.events && O.events.loaded)   || function(f, text){ console.log("CodeSnap> "+ (info(f).name) +" loaded."); }
-    , before    : (O.events && O.events.before)   || function(f, text){ return f; }
-    , indexed   : (O.events && O.events.indexed)  || function(wrapper, anchor){ wrapper.appendChild(anchor); }
+      before_load : (O.events && O.events.before_load) || function(f, text){ return f; }
+    , loaded      : (O.events && O.events.loaded)   || function(f, text){ console.log("CodeSnap> "+ (info(f).name) +" loaded."); }
+    , indexed     : (O.events && O.events.indexed)  || function(wrapper, anchor){ wrapper.appendChild(anchor); }
   }
 
     //
@@ -81,7 +81,7 @@ CodeSnap = function(O){
       anc.setAttribute('href', '#' + C.prefix + file.name);
       anc.setAttribute('class', C.prefix + 'index-anchor');
       anc.innerHTML = file.name;
-      C.events.indexed(ind, anc);
+      C.events.indexed(ind, anc, file);
     }
     var title = document.createElement('div');
       title.setAttribute('id', C.prefix + file.name + '-title');
@@ -195,11 +195,13 @@ CodeSnap = function(O){
       ? C.files.filter(this.filtering_file(file))
       : C.files
     ).map(function(v, i){
+      v = (typeof v === 'string') ? [v] : v;
       prepare_GUI_for_file(v);
       load_sorce(make_source_url(v), function(res){
-        var rv = C.events.before(v, res);
+        var file = info(v);
+        var rv = C.events.before_load(file, res);
         preview(v, res);
-        C.events.loaded(v, res, rv);
+        C.events.loaded(file, res, rv);
       });
     });
   }

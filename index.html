@@ -67,15 +67,19 @@ pre.codesnap-exception {
           console.log('Complete callback of ' + file.name);
         }
       }
-    ]
+    ],
+    "sample3"
   ],
   events: {
     loaded: function(f){
-      console.log(f[0] + ' loaded');
+      console.log(f.name + ' loaded');
     },
-    indexed: function(wrapper, anchor){
+    indexed: function(wrapper, anchor, file){
+      var p = document.createElement("DIV");
+      anchor.innerHTML = file.name + ' - ' + file.title;
       anchor.style.margin = '4px';
-      wrapper.appendChild(anchor);
+      p.appendChild(anchor);
+      wrapper.appendChild(p);
     }
   }
 })).load();
