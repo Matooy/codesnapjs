@@ -118,7 +118,7 @@ CodeSnap = function(O){
       (new Function("'use strict'; " + src))(file.param || {});
       (file.callback.complete) && file.callback.complete(file);
     }catch(e){
-      console.error("[CodeSnap] Error occured in " + file.name);
+      console.error("[CodeSnap] Error occured in " + file.name + ' => "'+e.message+'"');
       wrap.className = wrap.className + ' codesnap-exception';
       pre.className = pre.className + ' codesnap-exception';
       pre.title = '[CodeSnap] ' + e.message;
